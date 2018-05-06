@@ -13,11 +13,14 @@ public:
     void setColor(sf::Color color);
     void setType(int type);
     void draw(sf::RenderWindow& window);
-    
+
+	sf::Vector2i getPosition() const;
+	int getType() const;
+
 private:
     sf::RectangleShape sprite;
     sf::Color color;
-    
+
     int type;
     int x;
     int y;

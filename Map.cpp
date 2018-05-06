@@ -13,21 +13,18 @@ Map::Map(const std::string& map_name)
 	: name(map_name)
 {
 	std::cout << "Map: Loading map: " << map_name << std::endl;
-	if (!this->load(name))
-	{
+
+	if (!load(name)) {
 		std::cout << "Map: Failed to load map: " << map_name << std::endl;
-	}
-	else
-	{
+	} else {
 		std::cout << "Map: " << map_name << " loaded successfully"
-				  << std::endl;
+			<< std::endl;
 	}
 }
 
 void Map::render(sf::RenderWindow& window)
 {
-	for (Brick& b : bricks)
-	{
+	for (Brick& b : bricks) {
 		b.draw(window);
 	}
 }
@@ -37,31 +34,27 @@ bool Map::load(const std::string& map_name)
 	std::ifstream fp(map_name);
 	int x = 0;
     int y = 0;
+	int type = 0;
+	char color = '\0';
 	
 	if (!fp) {
 		std::cout << "Map::load: Failed to open " << map_name << std::endl;
 		return false;
 	}
 
-	while (y < NUM_Y)
-	{
-		x = 0;
-
-		for (int i = 0; i < NUM_X; i++)
-		{
-			int type;
-			char color;
-
+	for (int y = 0; y < NUM_Y && !fp.eof(); y++) {
+		for (int x = 0; x < NUM_X && !fp.eof(); x++) {
 			fp >> type;
 			fp >> color;
 
-			bricks.push_back(Brick(color, sf::Vector2i(x, y),
-							 type));
+			if (fp.fail()) {
+				std::cerr << "Map::load: failed while reading " << map_name << "\n";
+				fp.clear(fp.rdstate() | std::ios_base::eofbit); // end loops
+				break;
+			}
 
-			x += 1;
+			bricks.push_back(Brick(color, sf::Vector2i(x, y), type));
 		}
-
-		y += 1;
 	}
     
     return true;

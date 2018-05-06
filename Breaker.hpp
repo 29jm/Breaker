@@ -20,7 +20,6 @@ public:
     bool isFinished();
     
 private:
-    void handleKeyboard(const sf::Keyboard::Key& key);
     float getDeltaTime();
     void handleCollision();
     
@@ -29,12 +28,9 @@ private:
     sf::CircleShape ball;
     sf::Clock dt;
     sf::Vector2f ball_direction;
-    float accel;
-    float delta_t;
-    int actual_map;
+    int actual_map; // the _actual_ map
     int map_number;
     bool stuck;
-    bool moved;
     bool is_finished;
 };
 

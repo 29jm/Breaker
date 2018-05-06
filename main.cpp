@@ -6,15 +6,13 @@
 int main(int argc, char* argv[])
 {
 	sf::RenderWindow window(sf::VideoMode(SIZE_X*NUM_X, SIZE_Y*NUM_Y),
-						    "Breaker by p0ney");
+		"Breaker by p0ney");
 	Breaker breaker;
 	
-	while (!breaker.isFinished()) 
-	{
+	while (!breaker.isFinished()) {
 		sf::Event event;
 		
-		while (window.pollEvent(event))
-		{
+		while (window.pollEvent(event)) {
 			breaker.handleEvents(event);
 		}
 

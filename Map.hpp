@@ -18,7 +18,6 @@ public:
     const sf::Vector2u getSize();
     explicit operator bool() const;
     
-private:
     std::vector<Brick> bricks;
     std::string name;
 };

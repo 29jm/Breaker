@@ -12,15 +12,13 @@
 
 #define BORDER_SIZE 1
 
-#define ACCEL 30
-#define DECEL 2
-#define MAX_ACCEL 300
 #define PADDLE_SIZE_X 50
 #define PADDLE_SIZE_Y 13
+#define PADDLE_SPEED 200.0f
 
 #define BALL_RADIUS 7
 #define BALL_POINT_COUNT 32
 #define BALL_SIDE BALL_RADIUS*2
-#define BALL_SPEED 80
+#define BALL_SPEED 150.0f
 
 #endif
