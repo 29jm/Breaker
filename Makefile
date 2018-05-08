@@ -1,3 +1,4 @@
+CXX = clang++
 SOURCES = main.cpp Breaker.cpp Brick.cpp Map.cpp
 OBJS = $(SOURCES:.cpp=.o)
 LIBS = -lsfml-graphics -lsfml-window -lsfml-system
@@ -9,12 +10,12 @@ release: PARAMS = -O3
 release: breaker
 
 breaker: $(OBJS)
-	g++ $(PARAMS) $(LIBS) $(OBJS) -o breaker
+	$(CXX) $(PARAMS) $(LIBS) $(OBJS) -o breaker
 
 %.cpp: %.o
 
 %.o: %.cpp
-	g++ -c $(PARAMS) $< -o $@
+	$(CXX) -c $(PARAMS) $< -o $@
 
 clean:
 	rm -f *.o breaker
