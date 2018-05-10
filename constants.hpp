@@ -7,6 +7,9 @@
 #define SIZE_X 30
 #define SIZE_Y 15
 
+// size of the gap between the last brick and the bottom
+#define VOID_SIZE SIZE_Y*7
+
 #define ACTIVE 1
 #define TRANSPARENT 0
 

@@ -5,15 +5,27 @@
 
 int main(int argc, char* argv[])
 {
-	sf::RenderWindow window(sf::VideoMode(SIZE_X*NUM_X, SIZE_Y*NUM_Y),
-		"Breaker by p0ney");
 	Breaker breaker;
+	sf::Vector2u window_size(breaker.window_size);
+
+	sf::RenderWindow window(sf::VideoMode(window_size.x, window_size.y),
+		"Breaker by p0ney");
+	sf::View view(window.getDefaultView());
 	
 	while (!breaker.isFinished()) {
 		sf::Event event;
 		
 		while (window.pollEvent(event)) {
 			breaker.handleEvents(event);
+		}
+
+		if (breaker.window_size != window_size) {
+			window_size = breaker.window_size;
+			view.setSize(window_size.x, window_size.y);
+			view.setCenter(window_size.x/2., window_size.y/2.);
+
+			window.setView(view);
+			window.setSize(window_size);
 		}
 
 		breaker.update();

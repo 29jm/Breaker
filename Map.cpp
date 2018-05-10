@@ -1,8 +1,11 @@
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include "Map.hpp"
 #include "constants.hpp"
+
+using namespace sf;
 
 Map::Map()
 {
@@ -22,7 +25,7 @@ Map::Map(const std::string& map_name)
 	}
 }
 
-void Map::render(sf::RenderWindow& window)
+void Map::render(RenderWindow& window)
 {
 	for (Brick& b : bricks) {
 		b.draw(window);
@@ -30,38 +33,56 @@ void Map::render(sf::RenderWindow& window)
 }
 
 bool Map::load(const std::string& map_name)
-{
+	{
 	std::ifstream fp(map_name);
+	std::string line;
 	int x = 0;
-    int y = 0;
+	int y = 0;
 	int type = 0;
 	char color = '\0';
-	
+
 	if (!fp) {
-		std::cout << "Map::load: Failed to open " << map_name << std::endl;
+		std::cerr << "Map::load: Failed to open " << map_name << std::endl;
 		return false;
 	}
 
-	for (int y = 0; y < NUM_Y && !fp.eof(); y++) {
-		for (int x = 0; x < NUM_X && !fp.eof(); x++) {
-			fp >> type;
-			fp >> color;
+	while (!fp.eof()) {
+		std::getline(fp, line);
 
-			if (fp.fail()) {
-				std::cerr << "Map::load: failed while reading " << map_name << "\n";
-				fp.clear(fp.rdstate() | std::ios_base::eofbit); // end loops
-				break;
+		std::istringstream stream(line);
+		int x = 0;
+
+		while (!stream.eof()) {
+			stream >> type;
+			stream >> color;
+
+			if (fp.eof()) {
+				return true;
+			} else if (fp.fail()) {
+				return false;
 			}
 
-			bricks.push_back(Brick(color, sf::Vector2i(x, y), type));
+			bricks.push_back(Brick(color, Vector2i(x, y), type));
+			x += 1;
 		}
+
+		y += 1;
 	}
-    
-    return true;
 }
 
-const sf::Vector2u Map::getSize()
+Vector2u Map::getSize()
 {
-	return sf::Vector2u(SIZE_X*NUM_X, SIZE_Y*NUM_Y);
+	int x = 0, y = 0;
+
+	if (size == Vector2u()) {
+		for (const Brick& b : bricks) {
+			x = std::max(x, b.x);
+			y = std::max(y, b.y);
+		}
+
+		size = Vector2u(SIZE_X*x, SIZE_Y*y + VOID_SIZE);
+	}
+
+	return size;
 }
 

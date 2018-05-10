@@ -11,19 +11,16 @@ public:
     Brick(char color, sf::Vector2i pos, int brick_type);
 
     void setColor(sf::Color color);
-    void setType(int type);
     void draw(sf::RenderWindow& window);
 
 	sf::Vector2i getPosition() const;
-	int getType() const;
-
-private:
-    sf::RectangleShape sprite;
-    sf::Color color;
 
     int type;
     int x;
     int y;
+
+    sf::RectangleShape sprite;
+    sf::Color color;
 };
 
 #endif	/* BRICK_HPP */

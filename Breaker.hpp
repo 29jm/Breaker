@@ -15,11 +15,16 @@ public:
 
 	bool isFinished();
 
+	sf::Vector2u window_size;
+
 private:
 	float getDeltaTime();
+
 	void handleCollision();
 	float getBounceAngle(float dx);
 	float getBounceSpeed(float dx);
+
+	void changeMap(int map);
 
 	std::vector<Map> maps;
 	sf::RectangleShape paddle;
