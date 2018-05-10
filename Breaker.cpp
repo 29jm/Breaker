@@ -155,7 +155,7 @@ void Breaker::handleCollision()
 	}
 	
 	if (paddle.getPosition().x > map_size.x-PADDLE_SIZE_X) {
-		paddle.setPosition(SIZE_X*NUM_X-PADDLE_SIZE_X, paddle.getPosition().y);
+		paddle.setPosition(map_size.x-PADDLE_SIZE_X, paddle.getPosition().y);
 	}
 
 	/* paddle/ball collisions*/
@@ -193,7 +193,7 @@ void Breaker::handleCollision()
 		} else if (bounds.top+BALL_SIDE/2. > brick.top+SIZE_Y) { // [ ]
 			ball_direction.y = abs(ball_direction.y);            //  O
 		} else if (bounds.top+BALL_SIDE/2. < brick.top) { //  O
-			ball_direction.y = -abs(ball_direction.y);     // [ ]
+			ball_direction.y = -abs(ball_direction.y);    // [ ]
 		}
 
 		map.erase(map.begin()+i);
@@ -222,6 +222,7 @@ void Breaker::changeMap(int map) {
 	std::cout << "Breaker: switching to map number " << map+1 << "\n";
 
 	actual_map = map;
+	maps[actual_map].load();
 	window_size = maps[actual_map].getSize();
 	paddle.setPosition(window_size.x/2.-PADDLE_SIZE_X/2.,
 		window_size.y-PADDLE_SIZE_Y*1.2);

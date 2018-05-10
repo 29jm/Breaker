@@ -20,6 +20,7 @@ for y in range(9):
         fp.write("1")
         fp.write(' ')
         fp.write(bricks[color])
-        fp.write(' ')
+        if x != 19:
+            fp.write(' ')
         color = (color + 1) % 3
     fp.write("\n")

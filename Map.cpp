@@ -17,7 +17,7 @@ Map::Map(const std::string& map_name)
 {
 	std::cout << "Map: Loading map: " << map_name << std::endl;
 
-	if (!load(name)) {
+	if (!load()) {
 		std::cout << "Map: Failed to load map: " << map_name << std::endl;
 	} else {
 		std::cout << "Map: " << map_name << " loaded successfully"
@@ -32,17 +32,20 @@ void Map::render(RenderWindow& window)
 	}
 }
 
-bool Map::load(const std::string& map_name)
-	{
-	std::ifstream fp(map_name);
+bool Map::load()
+{
+	std::ifstream fp(name);
 	std::string line;
 	int x = 0;
 	int y = 0;
 	int type = 0;
 	char color = '\0';
 
+	bricks.clear();
+	padding_bricks.clear();
+	size = Vector2u();
+
 	if (!fp) {
-		std::cerr << "Map::load: Failed to open " << map_name << std::endl;
 		return false;
 	}
 
@@ -62,7 +65,12 @@ bool Map::load(const std::string& map_name)
 				return false;
 			}
 
-			bricks.push_back(Brick(color, Vector2i(x, y), type));
+			if (type == 0) {
+				padding_bricks.push_back(Brick(color, Vector2i(x, y), type));
+			} else {
+				bricks.push_back(Brick(color, Vector2i(x, y), type));
+			}
+
 			x += 1;
 		}
 
@@ -76,6 +84,11 @@ Vector2u Map::getSize()
 
 	if (size == Vector2u()) {
 		for (const Brick& b : bricks) {
+			x = std::max(x, b.x);
+			y = std::max(y, b.y);
+		}
+
+		for (const Brick& b : padding_bricks) {
 			x = std::max(x, b.x);
 			y = std::max(y, b.y);
 		}

@@ -13,17 +13,16 @@ public:
     Map(const std::string& map_name);
 
     void render(sf::RenderWindow& window);
-    bool load(const std::string& map_name);
-    
+    bool load();
+
     sf::Vector2u getSize();
-    explicit operator bool() const;
-    
+
     std::vector<Brick> bricks;
     std::string name;
 
 private:
+	std::vector<Brick> padding_bricks;
 	sf::Vector2u size;
 };
 
 #endif	/* MAP_HPP */
-
