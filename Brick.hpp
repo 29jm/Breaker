@@ -7,20 +7,21 @@
 class Brick
 {
 public:
-    Brick();
-    Brick(char color, sf::Vector2i pos, int brick_type);
+	Brick();
+	Brick(char color, sf::Vector2i pos, int brick_type);
 
-    void setColor(sf::Color color);
-    void draw(sf::RenderWindow& window);
+	void setColor(sf::Color color);
+	void draw(sf::RenderWindow& window);
 
 	sf::Vector2i getPosition() const;
+	sf::FloatRect getRect() const;
 
-    int type;
-    int x;
-    int y;
+	int type;
+	int x;
+	int y;
 
-    sf::RectangleShape sprite;
-    sf::Color color;
+	sf::RectangleShape sprite;
+	sf::Color color;
 };
 
 #endif	/* BRICK_HPP */

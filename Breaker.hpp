@@ -21,6 +21,8 @@ private:
 	float getDeltaTime();
 
 	void handleCollision();
+	void ballBricksCollision();
+
 	float getBounceAngle(float dx);
 	float getBounceSpeed(float dx);
 

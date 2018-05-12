@@ -12,7 +12,7 @@ release: breaker
 breaker: $(OBJS)
 	$(CXX) $(PARAMS) $(LIBS) $(OBJS) -o breaker
 
-main.cpp: constants.hpp
+main.o: constants.hpp
 	$(CXX) -c $(PARAMS) main.cpp -o main.o
 
 %.cpp: %.o

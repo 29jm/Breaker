@@ -76,6 +76,8 @@ bool Map::load()
 
 		y += 1;
 	}
+
+	return true;
 }
 
 Vector2u Map::getSize()

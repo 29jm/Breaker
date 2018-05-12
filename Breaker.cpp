@@ -172,31 +172,73 @@ void Breaker::handleCollision()
 	}
 
 	/* ball/bricks collisions */
+	ballBricksCollision();
+
+	/* exit measures*/
+	if (maps[actual_map].bricks.empty()) {
+		std::cout << "You won. Well played.\n";
+		changeMap(actual_map);
+	}
+}
+
+/* The algorithm is based on
+ * https://gamedev.stackexchange.com/a/120897
+ * */
+void Breaker::ballBricksCollision() {
 	FloatRect bounds = ball.getGlobalBounds();
-	std::vector<Brick>& map = maps[actual_map].bricks;
+	std::vector<Brick>& bricks = maps[actual_map].bricks;
+	const float r = bounds.width/2;
 
-	// A better version:
-	// get all (theoretically) colliding bricks in a list
-	// then do proper-ish circle/AABB collision tests
-	for (int i = 0; i < map.size(); i++) {
-		Vector2i position = map[i].getPosition();
-		FloatRect brick(position.x, position.y, SIZE_X, SIZE_Y);
+	for (int i = 0; i < bricks.size(); i++) {
+		FloatRect b(bricks[i].getRect());
+		FloatRect h_rect(b.left-r, b.top, b.width+2*r, b.height);
+		FloatRect v_rect(b.left, b.top-r, b.width, b.height+2*r);
+		Vector2f ball_center(bounds.left+bounds.width/2, bounds.top+bounds.height/2);
 
-		if (!bounds.intersects(brick)) {
-			continue;
+		if (h_rect.contains(ball_center)) {
+			ball_direction.x = -ball_direction.x; goto out;
 		}
 
-		if (bounds.left+BALL_SIDE/2. < brick.left) { // O[ ]
-			ball_direction.x = -abs(ball_direction.x);
-		} else if (bounds.left+BALL_SIDE/2. > brick.left+SIZE_X) { // [ ]O
-			ball_direction.x = abs(ball_direction.x);
-		} else if (bounds.top+BALL_SIDE/2. > brick.top+SIZE_Y) { // [ ]
-			ball_direction.y = abs(ball_direction.y);            //  O
-		} else if (bounds.top+BALL_SIDE/2. < brick.top) { //  O
-			ball_direction.y = -abs(ball_direction.y);    // [ ]
+		if (v_rect.contains(ball_center)) {
+			ball_direction.y = -ball_direction.y; goto out;
 		}
 
-		map.erase(map.begin()+i);
+		if (distance(ball_center, Vector2f(b.left, b.top)) < r) { // top left
+			if (b.left - ball_center.x < b.top - ball_center.y) {
+				ball_direction.y = -ball_direction.y; goto out;
+			} else {
+				ball_direction.x = -ball_direction.x; goto out;
+			}
+		}
+
+		if (distance(ball_center, Vector2f(b.left+b.width, b.top)) < r) { // top right
+			if (ball_center.x - (b.left+b.width) < b.top - ball_center.y) {
+				ball_direction.y = -ball_direction.y; goto out;
+			} else {
+				ball_direction.x = -ball_direction.x; goto out;
+			}
+		}
+
+		if (distance(ball_center, Vector2f(b.left+b.width, b.top+b.height)) < r) { // bottom right
+			if (ball_center.x - (b.left+b.width) < ball_center.y - (b.top+b.height)) {
+				ball_direction.y = -ball_direction.y; goto out;
+			} else {
+				ball_direction.x = -ball_direction.x; goto out;
+			}
+		}
+
+		if (distance(ball_center, Vector2f(b.left, b.top+b.height)) < r) { // bottom left
+			if (b.left - ball_center.x < ball_center.y - (b.top+b.height)) {
+				ball_direction.y = -ball_direction.y; goto out;
+			} else {
+				ball_direction.x = -ball_direction.x; goto out;
+			}
+		}
+
+		continue; // no collision was found
+
+		out:
+		bricks.erase(bricks.begin()+i);
 		break;
 	}
 }
