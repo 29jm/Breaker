@@ -25,4 +25,6 @@
 #define BALL_SIDE BALL_RADIUS*2
 #define BALL_SPEED 150.0f
 
+#define BONUS_SPEED 100.0f
+
 #endif

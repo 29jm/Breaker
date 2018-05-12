@@ -1,5 +1,4 @@
-#ifndef BREAKER_HPP
-#define	BREAKER_HPP
+#pragma once
 
 #include <vector>
 #include "Map.hpp"
@@ -25,6 +24,7 @@ private:
 	Brick ballBricksCollision();
 
 	void handleBrickDestruction(const Brick& b);
+	void applyBonus(Brick::Type type);
 
 	float getBounceAngle(float dx);
 	float getBounceSpeed(float dx);
@@ -38,15 +38,12 @@ private:
 	sf::Vector2f ball_direction;
 	int actual_map; // the _actual_ map
 	int map_number;
-	bool stuck;
 	bool is_finished;
-	int lives;
 
+	bool stuck;
+	unsigned int lives;
 	float paddle_speed;
-
 	float base_ball_speed;
 	float ball_speed;
+	std::vector<Brick> bonuses;
 };
-
-#endif	/* BREAKER_HPP */
-

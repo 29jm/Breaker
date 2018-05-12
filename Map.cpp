@@ -6,6 +6,7 @@
 #include "constants.hpp"
 
 using namespace sf;
+using std::max;
 
 Map::Map()
 {
@@ -65,15 +66,15 @@ bool Map::load()
 			}
 
 			if (type == 0) {
-				padding_bricks.push_back(Brick(color, Vector2i(x, y), type));
+				padding_bricks.push_back(Brick(color, Vector2f(x, y), Brick::Type(type)));
 			} else {
-				bricks.push_back(Brick(color, Vector2i(x, y), type));
+				bricks.push_back(Brick(color, Vector2f(x, y), Brick::Type(type)));
 			}
 
-			x += 1;
+			x += SIZE_X;
 		}
 
-		y += 1;
+		y += SIZE_Y;
 	}
 
 	return true;
@@ -81,7 +82,7 @@ bool Map::load()
 
 Vector2u Map::getSize()
 {
-	int x = 0, y = 0;
+	float x = 0, y = 0;
 
 	if (size == Vector2u()) {
 		for (const Brick& b : bricks) {
@@ -94,7 +95,7 @@ Vector2u Map::getSize()
 			y = std::max(y, b.y);
 		}
 
-		size = Vector2u(SIZE_X*x, SIZE_Y*y + VOID_SIZE);
+		size = Vector2u(int(x), int(y) + VOID_SIZE);
 	}
 
 	return size;

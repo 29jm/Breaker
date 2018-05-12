@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 	sf::Vector2u window_size(breaker.window_size);
 
 	sf::RenderWindow window(sf::VideoMode(window_size.x, window_size.y),
-		"Breaker by p0ney");
+		"Breaker by 29jm");
 	sf::View view(window.getDefaultView());
 	
 	while (!breaker.isFinished()) {

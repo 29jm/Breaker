@@ -15,8 +15,8 @@ Breaker::Breaker()
 	: paddle(Vector2f(PADDLE_SIZE_X, PADDLE_SIZE_Y)),
 	  ball(BALL_RADIUS, BALL_POINT_COUNT),
 	  ball_direction(0, 0),
-	  stuck(true),
 	  is_finished(false),
+	  stuck(true),
 	  lives(0),
 	  paddle_speed(PADDLE_SPEED),
 	  base_ball_speed(BALL_SPEED),
@@ -27,7 +27,7 @@ Breaker::Breaker()
 
 	if (!map_list)
 	{
-		std::cout << "Breaker: failed to load map.list" << std::endl;
+		std::cerr << "Breaker: failed to load map.list" << std::endl;
 		is_finished = true;
 	}
 
@@ -105,12 +105,21 @@ void Breaker::update() {
 		ball.move(ball_direction * delta_t);
 	}
 
+	for (Brick& b : bonuses) {
+		b.setPosition(b.x, b.y + BONUS_SPEED*delta_t);
+	}
+
 	handleCollision();
 }
 
 void Breaker::render(RenderWindow& window)
 {
-    maps[actual_map].render(window);
+	maps[actual_map].render(window);
+
+	for (Brick& b : bonuses) {
+		b.draw(window);
+	}
+
 	window.draw(paddle);
 	window.draw(ball);
 }
@@ -147,12 +156,15 @@ void Breaker::handleCollision()
 	}
 
 	if (ball_y+BALL_SIDE/2. >= map_size.y) {
-		lives -= 1;
 		if (lives == 0) {
 			changeMap(actual_map);
+			return;
 		} else {
 			stuck = true;
 		}
+
+		lives -= 1;
+		std::cout << "Lost a life, total " << lives << "\n";
 	}
 
 	/* paddle/walls collisions*/
@@ -163,6 +175,21 @@ void Breaker::handleCollision()
 	
 	if (paddle.getPosition().x > map_size.x-paddle_size) {
 		paddle.setPosition(map_size.x-paddle_size, paddle.getPosition().y);
+	}
+
+	/* bonuses/bottom/paddle collisions */
+	auto it = bonuses.begin();
+	while (it != bonuses.end()) {
+		Brick& b = *it;
+
+		if (b.y > map_size.y) {
+			it = bonuses.erase(it);
+		} else  if (b.getRect().intersects(paddle.getGlobalBounds())) {
+			applyBonus(b.type);
+			it = bonuses.erase(it);
+		} else {
+			++it;
+		}
 	}
 
 	/* paddle/ball collisions*/
@@ -246,8 +273,10 @@ Brick Breaker::ballBricksCollision() {
 			}
 		}
 
-		continue; // no collision was found
+		// no collision was found
+		continue;
 
+		// a collision occured
 		out:
 		Brick erased_brick(bricks[i]);
 		bricks.erase(bricks.begin()+i);
@@ -262,13 +291,18 @@ void Breaker::handleBrickDestruction(const Brick& b) {
 		return;
 	}
 
-	if (b.type == Brick::EXPAND) {
+	bonuses.push_back(b);
+}
+
+void Breaker::applyBonus(Brick::Type type) {
+	if (type == Brick::EXPAND) {
 		Vector2f size = paddle.getSize();
 		paddle.setSize(Vector2f(size.x+PADDLE_EXPAND, size.y));
 	}
 
-	if (b.type == Brick::ONE_UP) {
+	if (type == Brick::ONE_UP) {
 		lives += 1;
+		std::cout << "Gained a life, total " << lives << "\n";
 	}
 }
 
@@ -286,7 +320,7 @@ float Breaker::getBounceSpeed(float dx) {
 }
 
 void Breaker::changeMap(unsigned int map) {
-	if (map < 0 || map >= maps.size()) {
+	if (map >= maps.size()) {
 		return;
 	}
 
@@ -299,4 +333,5 @@ void Breaker::changeMap(unsigned int map) {
 	paddle.setPosition(window_size.x/2.-paddle.getSize().x/2.,
 		window_size.y-PADDLE_SIZE_Y*1.2);
 	stuck = true;
+	lives = 0;
 }

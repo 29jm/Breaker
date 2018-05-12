@@ -7,15 +7,6 @@
 class Brick
 {
 public:
-	Brick();
-	Brick(char color, sf::Vector2i pos, int brick_type);
-
-	void loadTextures();
-	void draw(sf::RenderWindow& window);
-
-	sf::Vector2i getPosition() const;
-	sf::FloatRect getRect() const;
-
 	enum Type {
 		BLANK,
 		NORMAL,
@@ -24,9 +15,18 @@ public:
 		NEW_BALL
 	};
 
-	int type;
-	int x;
-	int y;
+	Brick();
+	Brick(char color, sf::Vector2f pos, Type brick_type);
+
+	void loadTextures();
+	void draw(sf::RenderWindow& window);
+
+	void setPosition(float xp, float yp);
+	sf::FloatRect getRect() const;
+
+	Type type;
+	float x;
+	float y;
 
 	sf::Sprite sprite;
 	sf::RectangleShape background;

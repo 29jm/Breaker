@@ -12,7 +12,7 @@ Brick::Brick()
 
 }
 
-Brick::Brick(char brick_color, Vector2i pos, int brick_type)
+Brick::Brick(char brick_color, Vector2f pos, Type brick_type)
 	: type(brick_type), x(pos.x), y(pos.y)
 {
 	if (textures.empty()) {
@@ -32,10 +32,10 @@ Brick::Brick(char brick_color, Vector2i pos, int brick_type)
 
 	background.setSize(Vector2f(SIZE_X, SIZE_Y));
 	background.setFillColor(color);
-	background.setPosition(x*SIZE_X, y*SIZE_Y);
+	background.setPosition(x, y);
 
 	sprite.setTexture(textures[type]);
-	sprite.setPosition(x * SIZE_X, y * SIZE_Y);
+	sprite.setPosition(x, y);
 }
 
 void Brick::loadTextures() {
@@ -61,10 +61,14 @@ void Brick::draw(RenderWindow& window)
 	window.draw(sprite);
 }
 
-Vector2i Brick::getPosition() const {
-	return Vector2i(x*SIZE_X, y*SIZE_Y);
+void Brick::setPosition(float xp, float yp) {
+	x = xp;
+	y = yp;
+
+	sprite.setPosition(x, y);
+	background.setPosition(x, y);
 }
 
 FloatRect Brick::getRect() const {
-	return FloatRect(x*SIZE_X, y*SIZE_Y, SIZE_X, SIZE_Y);
+	return FloatRect(x, y, SIZE_X, SIZE_Y);
 }
