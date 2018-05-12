@@ -17,6 +17,7 @@ Breaker::Breaker()
 	  ball_direction(0, 0),
 	  stuck(true),
 	  is_finished(false),
+	  lives(0),
 	  paddle_speed(PADDLE_SPEED),
 	  base_ball_speed(BALL_SPEED),
 	  ball_speed(BALL_SPEED)
@@ -46,7 +47,7 @@ Breaker::Breaker()
 	changeMap(0);
 
 	paddle.setFillColor(Color::White);
-	paddle.setPosition(window_size.x/2.-PADDLE_SIZE_X/2.,
+	paddle.setPosition(window_size.x/2.-paddle.getSize().x/2.,
 		window_size.y-PADDLE_SIZE_Y*1.2);
 
 	ball.setFillColor(Color::Magenta);
@@ -96,7 +97,7 @@ void Breaker::update() {
 	}
 
 	if (stuck) {
-		ball.setPosition(paddle.getPosition().x+PADDLE_SIZE_X/2-BALL_SIDE/2,
+		ball.setPosition(paddle.getPosition().x+paddle.getSize().x/2-BALL_SIDE/2,
 			paddle.getPosition().y-BALL_SIDE);
 	} else {
 		float speed = norm<>(ball_direction);
@@ -128,8 +129,8 @@ float Breaker::getDeltaTime()
 
 void Breaker::handleCollision()
 {
-	int ball_x = ball.getPosition().x;
-	int ball_y = ball.getPosition().y;
+	unsigned int ball_x = ball.getPosition().x;
+	unsigned int ball_y = ball.getPosition().y;
 	Vector2u map_size = maps[actual_map].getSize();
 
 	/* ball/walls collisions */
@@ -146,22 +147,28 @@ void Breaker::handleCollision()
 	}
 
 	if (ball_y+BALL_SIDE/2. >= map_size.y) {
-		stuck = true;
+		lives -= 1;
+		if (lives == 0) {
+			changeMap(actual_map);
+		} else {
+			stuck = true;
+		}
 	}
 
 	/* paddle/walls collisions*/
+	float paddle_size = paddle.getSize().x;
 	if (paddle.getPosition().x < 0) {
 		paddle.setPosition(0, paddle.getPosition().y);
 	}
 	
-	if (paddle.getPosition().x > map_size.x-PADDLE_SIZE_X) {
-		paddle.setPosition(map_size.x-PADDLE_SIZE_X, paddle.getPosition().y);
+	if (paddle.getPosition().x > map_size.x-paddle_size) {
+		paddle.setPosition(map_size.x-paddle_size, paddle.getPosition().y);
 	}
 
 	/* paddle/ball collisions*/
 	if (ball.getGlobalBounds().intersects(paddle.getGlobalBounds())) {
-		float p_x = paddle.getPosition().x + PADDLE_SIZE_X/2.;
-		float delta_x = (p_x - (ball_x+BALL_SIDE/2.)) / (PADDLE_SIZE_X/2.);
+		float p_x = paddle.getPosition().x + paddle_size/2.;
+		float delta_x = (p_x - (ball_x+BALL_SIDE/2.)) / (paddle_size/2.);
 		delta_x = clamp(delta_x, -1, 1);
 
 		float angle = getBounceAngle(delta_x);
@@ -172,7 +179,11 @@ void Breaker::handleCollision()
 	}
 
 	/* ball/bricks collisions */
-	ballBricksCollision();
+	Brick collided = ballBricksCollision();
+
+	if (collided.type != Brick::BLANK) {
+		handleBrickDestruction(collided);
+	}
 
 	/* exit measures*/
 	if (maps[actual_map].bricks.empty()) {
@@ -184,12 +195,12 @@ void Breaker::handleCollision()
 /* The algorithm is based on
  * https://gamedev.stackexchange.com/a/120897
  * */
-void Breaker::ballBricksCollision() {
+Brick Breaker::ballBricksCollision() {
 	FloatRect bounds = ball.getGlobalBounds();
 	std::vector<Brick>& bricks = maps[actual_map].bricks;
 	const float r = bounds.width/2;
 
-	for (int i = 0; i < bricks.size(); i++) {
+	for (unsigned int i = 0; i < bricks.size(); i++) {
 		FloatRect b(bricks[i].getRect());
 		FloatRect h_rect(b.left-r, b.top, b.width+2*r, b.height);
 		FloatRect v_rect(b.left, b.top-r, b.width, b.height+2*r);
@@ -238,8 +249,26 @@ void Breaker::ballBricksCollision() {
 		continue; // no collision was found
 
 		out:
+		Brick erased_brick(bricks[i]);
 		bricks.erase(bricks.begin()+i);
-		break;
+		return erased_brick;
+	}
+
+	return Brick();
+}
+
+void Breaker::handleBrickDestruction(const Brick& b) {
+	if (b.type == Brick::NORMAL) {
+		return;
+	}
+
+	if (b.type == Brick::EXPAND) {
+		Vector2f size = paddle.getSize();
+		paddle.setSize(Vector2f(size.x+PADDLE_EXPAND, size.y));
+	}
+
+	if (b.type == Brick::ONE_UP) {
+		lives += 1;
 	}
 }
 
@@ -256,7 +285,7 @@ float Breaker::getBounceSpeed(float dx) {
 	return base_ball_speed*(1 + map(dx, 0, 1, 0, .5));
 }
 
-void Breaker::changeMap(int map) {
+void Breaker::changeMap(unsigned int map) {
 	if (map < 0 || map >= maps.size()) {
 		return;
 	}
@@ -266,7 +295,8 @@ void Breaker::changeMap(int map) {
 	actual_map = map;
 	maps[actual_map].load();
 	window_size = maps[actual_map].getSize();
-	paddle.setPosition(window_size.x/2.-PADDLE_SIZE_X/2.,
+	paddle.setSize(Vector2f(PADDLE_SIZE_X, PADDLE_SIZE_Y));
+	paddle.setPosition(window_size.x/2.-paddle.getSize().x/2.,
 		window_size.y-PADDLE_SIZE_Y*1.2);
 	stuck = true;
 }

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Map.hpp"
+#include "Brick.hpp"
 
 class Breaker
 {
@@ -21,12 +22,14 @@ private:
 	float getDeltaTime();
 
 	void handleCollision();
-	void ballBricksCollision();
+	Brick ballBricksCollision();
+
+	void handleBrickDestruction(const Brick& b);
 
 	float getBounceAngle(float dx);
 	float getBounceSpeed(float dx);
 
-	void changeMap(int map);
+	void changeMap(unsigned int map);
 
 	std::vector<Map> maps;
 	sf::RectangleShape paddle;
@@ -37,7 +40,10 @@ private:
 	int map_number;
 	bool stuck;
 	bool is_finished;
+	int lives;
+
 	float paddle_speed;
+
 	float base_ball_speed;
 	float ball_speed;
 };

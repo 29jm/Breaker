@@ -2,7 +2,7 @@ CXX = g++
 SOURCES = main.cpp Breaker.cpp Brick.cpp Map.cpp
 OBJS = $(SOURCES:.cpp=.o)
 LIBS = -lsfml-graphics -lsfml-window -lsfml-system
-PARAMS = -g
+PARAMS = -g -Wall
 
 all: breaker
 

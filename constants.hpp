@@ -18,6 +18,7 @@
 #define PADDLE_SIZE_X 50
 #define PADDLE_SIZE_Y 13
 #define PADDLE_SPEED 200.0f
+#define PADDLE_EXPAND 10
 
 #define BALL_RADIUS 7
 #define BALL_POINT_COUNT 32
