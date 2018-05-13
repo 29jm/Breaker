@@ -16,7 +16,7 @@ public:
 	};
 
 	Brick();
-	Brick(char color, sf::Vector2f pos, Type brick_type);
+	Brick(sf::Color brick_color, sf::Vector2f pos, Type brick_type);
 
 	void loadTextures();
 	void draw(sf::RenderWindow& window);

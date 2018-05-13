@@ -33,6 +33,8 @@ int main(int argc, char* argv[])
 		window.clear(sf::Color::Black);
 		breaker.render(window);
 		window.display();
+
+		sf::sleep(sf::milliseconds(3));
 	}
 	
 	return 0;

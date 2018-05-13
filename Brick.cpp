@@ -12,22 +12,11 @@ Brick::Brick()
 
 }
 
-Brick::Brick(char brick_color, Vector2f pos, Type brick_type)
-	: type(brick_type), x(pos.x), y(pos.y)
+Brick::Brick(Color brick_color, Vector2f pos, Type brick_type)
+	: type(brick_type), x(pos.x), y(pos.y), color(brick_color)
 {
 	if (textures.empty()) {
 		loadTextures();
-	}
-
-	switch (brick_color) {
-	case 'R':
-		color = Color(255, 0, 0);
-		break;
-	case 'G':
-		color = Color(0, 255, 0);
-		break;
-	case 'B':
-		color = Color(0, 0, 255);
 	}
 
 	background.setSize(Vector2f(SIZE_X, SIZE_Y));

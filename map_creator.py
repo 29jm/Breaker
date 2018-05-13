@@ -9,7 +9,7 @@ if len(sys.argv) < 2:
 fp = open(sys.argv[1], 'w')
 
 types = ["0", "1"]
-bricks = ["R", "G", "B"]
+bricks = ["0", "1", "2"]
 
 x = 0
 y = 0

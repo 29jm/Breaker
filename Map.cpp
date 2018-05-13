@@ -8,6 +8,12 @@
 using namespace sf;
 using std::max;
 
+static std::vector<uint32_t> palette{
+	0xFF1415FF, // R
+	0x00DB00FF, // G
+	0x4CB7FFFF  // B
+};
+
 Map::Map()
 {
 	
@@ -36,7 +42,7 @@ bool Map::load()
 	std::string line;
 	int y = 0;
 	int type = 0;
-	char color = '\0';
+	unsigned int color_index = 0;
 
 	bricks.clear();
 	padding_bricks.clear();
@@ -54,7 +60,7 @@ bool Map::load()
 
 		while (!stream.eof()) {
 			stream >> type;
-			stream >> color;
+			stream >> color_index;
 
 			if (fp.eof()) {
 				return true;
@@ -62,10 +68,19 @@ bool Map::load()
 				return false;
 			}
 
-			if (type == 0) {
-				padding_bricks.push_back(Brick(color, Vector2f(x, y), Brick::Type(type)));
+			Color color;
+			if (color_index < palette.size()) {
+				color = Color(palette[color_index]);
 			} else {
-				bricks.push_back(Brick(color, Vector2f(x, y), Brick::Type(type)));
+				color = Color::Red; // best color
+			}
+
+			Brick b(Color(color), Vector2f(x, y), Brick::Type(type));
+
+			if (type == 0) {
+				padding_bricks.push_back(b);
+			} else {
+				bricks.push_back(b);
 			}
 
 			x += SIZE_X;
@@ -91,6 +106,10 @@ Vector2u Map::getSize()
 			x = std::max(x, b.x);
 			y = std::max(y, b.y);
 		}
+
+		// The coordinates are the top-left corner of each brick
+		x += SIZE_X;
+		y += SIZE_Y;
 
 		size = Vector2u(int(x), int(y) + VOID_SIZE);
 	}

@@ -20,7 +20,7 @@
 #define PADDLE_SPEED 200.0f
 #define PADDLE_EXPAND 10
 
-#define BALL_RADIUS 7
+#define BALL_RADIUS 6
 #define BALL_POINT_COUNT 32
 #define BALL_SIDE BALL_RADIUS*2
 #define BALL_SPEED 150.0f
