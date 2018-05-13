@@ -37,7 +37,6 @@ private:
 	sf::Clock dt;
 	sf::Vector2f ball_direction;
 	int actual_map; // the _actual_ map
-	int map_number;
 	bool is_finished;
 
 	bool stuck;

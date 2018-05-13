@@ -20,9 +20,6 @@ Map::Map(const std::string& map_name)
 
 	if (!load()) {
 		std::cout << "Map: Failed to load map: " << map_name << std::endl;
-	} else {
-		std::cout << "Map: " << map_name << " loaded successfully"
-			<< std::endl;
 	}
 }
 

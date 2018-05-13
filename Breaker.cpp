@@ -27,6 +27,7 @@ Breaker::Breaker()
 
 	if (!map_list)
 	{
+		// TODO create the file and a default map if absent
 		std::cerr << "Breaker: failed to load map.list" << std::endl;
 		is_finished = true;
 	}
@@ -90,25 +91,29 @@ void Breaker::handleEvents(const Event& event)
 void Breaker::update() {
 	float delta_t = getDeltaTime();
 
+	// paddle
 	if (Keyboard::isKeyPressed(Keyboard::Left)) {
-		paddle.move(-PADDLE_SPEED*delta_t, 0);
+		paddle.move(-paddle_speed*delta_t, 0);
 	} else if (Keyboard::isKeyPressed(Keyboard::Right)) {
-		paddle.move(PADDLE_SPEED*delta_t, 0);
+		paddle.move(paddle_speed*delta_t, 0);
 	}
 
+	// ball
 	if (stuck) {
 		ball.setPosition(paddle.getPosition().x+paddle.getSize().x/2-BALL_SIDE/2,
 			paddle.getPosition().y-BALL_SIDE);
 	} else {
-		float speed = norm<>(ball_direction);
+		float speed = norm(ball_direction);
 		ball_direction = (ball_direction / speed) * ball_speed;
 		ball.move(ball_direction * delta_t);
 	}
 
+	// bonuses
 	for (Brick& b : bonuses) {
 		b.setPosition(b.x, b.y + BONUS_SPEED*delta_t);
 	}
 
+	// collisions
 	handleCollision();
 }
 
@@ -138,8 +143,8 @@ float Breaker::getDeltaTime()
 
 void Breaker::handleCollision()
 {
-	unsigned int ball_x = ball.getPosition().x;
-	unsigned int ball_y = ball.getPosition().y;
+	int ball_x = ball.getPosition().x;
+	int ball_y = ball.getPosition().y;
 	Vector2u map_size = maps[actual_map].getSize();
 
 	/* ball/walls collisions */
@@ -147,7 +152,7 @@ void Breaker::handleCollision()
 		ball_direction = Vector2f(abs(ball_direction.x), ball_direction.y);
 	}
 
-	if (ball_x >= map_size.x-BALL_SIDE) {
+	if (ball_x >= int(map_size.x)-BALL_SIDE) {
 		ball_direction = Vector2f(-abs(ball_direction.x), ball_direction.y);
 	}
 
@@ -332,6 +337,9 @@ void Breaker::changeMap(unsigned int map) {
 	paddle.setSize(Vector2f(PADDLE_SIZE_X, PADDLE_SIZE_Y));
 	paddle.setPosition(window_size.x/2.-paddle.getSize().x/2.,
 		window_size.y-PADDLE_SIZE_Y*1.2);
+	paddle_speed = PADDLE_SPEED;
+	base_ball_speed = BALL_SPEED;
 	stuck = true;
 	lives = 0;
+	bonuses.clear();
 }

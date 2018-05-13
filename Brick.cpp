@@ -39,20 +39,12 @@ Brick::Brick(char brick_color, Vector2f pos, Type brick_type)
 }
 
 void Brick::loadTextures() {
-	Texture blank, normal, expand, one_up, new_ball;
+	textures.resize(5);
 
-	// Resizing+loading would avoid a copy
-	if (!normal.loadFromFile("textures/normal.png"))
-		std::cout << "Brick: error loading textures\n";
-	expand.loadFromFile("textures/expand.png");
-	one_up.loadFromFile("textures/one_up.png");
-	new_ball.loadFromFile("textures/new_ball.png");
-
-	textures.push_back(blank);
-	textures.push_back(normal);
-	textures.push_back(expand);
-	textures.push_back(one_up);
-	textures.push_back(new_ball);
+	textures[1].loadFromFile("textures/normal.png");
+	textures[2].loadFromFile("textures/expand.png");
+	textures[3].loadFromFile("textures/one_up.png");
+	textures[4].loadFromFile("textures/new_ball.png");
 }
 
 void Brick::draw(RenderWindow& window)
