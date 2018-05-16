@@ -18,13 +18,20 @@ public:
 	sf::Vector2u window_size;
 
 private:
+	struct Ball {
+		sf::CircleShape sprite;
+		sf::Vector2f direction;
+		float speed;
+	};
+
 	float getDeltaTime();
 
 	void handleCollision();
-	Brick ballBricksCollision();
+	Brick ballBricksCollision(Ball& ball);
 
 	void handleBrickDestruction(const Brick& b);
 	void applyBonus(Brick::Type type);
+	void addBall();
 
 	float getBounceAngle(float dx);
 	float getBounceSpeed(float dx);
@@ -33,9 +40,8 @@ private:
 
 	std::vector<Map> maps;
 	sf::RectangleShape paddle;
-	sf::CircleShape ball;
+	std::vector<Ball> balls;
 	sf::Clock dt;
-	sf::Vector2f ball_direction;
 	int actual_map; // the _actual_ map
 	bool is_finished;
 
@@ -43,6 +49,5 @@ private:
 	unsigned int lives;
 	float paddle_speed;
 	float base_ball_speed;
-	float ball_speed;
 	std::vector<Brick> bonuses;
 };

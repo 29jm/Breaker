@@ -13,14 +13,11 @@ using std::abs;
 
 Breaker::Breaker()
 	: paddle(Vector2f(PADDLE_SIZE_X, PADDLE_SIZE_Y)),
-	  ball(BALL_RADIUS, BALL_POINT_COUNT),
-	  ball_direction(0, 0),
 	  is_finished(false),
 	  stuck(true),
 	  lives(0),
 	  paddle_speed(PADDLE_SPEED),
-	  base_ball_speed(BALL_SPEED),
-	  ball_speed(BALL_SPEED)
+	  base_ball_speed(BALL_SPEED)
 {
 	std::ifstream map_list("map.list");
 	std::string map_name;
@@ -46,14 +43,6 @@ Breaker::Breaker()
 	std::cout << "Breaker: " << maps.size() << " maps loaded" << std::endl;
 
 	changeMap(0);
-
-	paddle.setFillColor(Color::White);
-	paddle.setPosition(window_size.x/2.-paddle.getSize().x/2.,
-		window_size.y-PADDLE_SIZE_Y*1.2);
-
-	ball.setFillColor(Color::Magenta);
-	ball.setOutlineColor(Color::Black);
-	ball.setOutlineThickness(1);
 }
 
 void Breaker::handleEvents(const Event& event)
@@ -77,7 +66,9 @@ void Breaker::handleEvents(const Event& event)
 			changeMap(actual_map - 1);
 			break;
 		case Keyboard::Space:
-			stuck = !stuck;
+			if (stuck) {
+				stuck = false;
+			}
 			break;
 		default:
 			break;
@@ -100,12 +91,14 @@ void Breaker::update() {
 
 	// ball
 	if (stuck) {
-		ball.setPosition(paddle.getPosition().x+paddle.getSize().x/2-BALL_SIDE/2,
+		balls[0].sprite.setPosition(paddle.getPosition().x+paddle.getSize().x/2-BALL_SIDE/2,
 			paddle.getPosition().y-BALL_SIDE);
 	} else {
-		float speed = norm(ball_direction);
-		ball_direction = (ball_direction / speed) * ball_speed;
-		ball.move(ball_direction * delta_t);
+		for (Ball& ball : balls) {
+			float speed = norm(ball.direction);
+			ball.direction = (ball.direction/speed) * ball.speed;
+			ball.sprite.move(ball.direction * delta_t);
+		}
 	}
 
 	// bonuses
@@ -126,7 +119,10 @@ void Breaker::render(RenderWindow& window)
 	}
 
 	window.draw(paddle);
-	window.draw(ball);
+
+	for (Ball& ball : balls) {
+		window.draw(ball.sprite);
+	}
 }
 
 bool Breaker::isFinished()
@@ -143,33 +139,67 @@ float Breaker::getDeltaTime()
 
 void Breaker::handleCollision()
 {
-	int ball_x = ball.getPosition().x;
-	int ball_y = ball.getPosition().y;
 	Vector2u map_size = maps[actual_map].getSize();
 
-	/* ball/walls collisions */
-	if (ball_x <= 0) {
-		ball_direction = Vector2f(abs(ball_direction.x), ball_direction.y);
-	}
+	for (auto it = balls.begin(); it != balls.end();) {
+		Ball& b = *it;
+		Vector2f pos = b.sprite.getPosition();
 
-	if (ball_x >= int(map_size.x)-BALL_SIDE) {
-		ball_direction = Vector2f(-abs(ball_direction.x), ball_direction.y);
-	}
-
-	if (ball_y <= 0) {
-		ball_direction = Vector2f(ball_direction.x, abs(ball_direction.y));
-	}
-
-	if (ball_y+BALL_SIDE/2. >= map_size.y) {
-		if (lives == 0) {
-			changeMap(actual_map);
-			return;
-		} else {
-			stuck = true;
+		/* ball/walls collisions */
+		if (pos.x <= 0) {
+			b.direction = Vector2f(abs(b.direction.x), b.direction.y);
 		}
 
-		lives -= 1;
-		std::cout << "Lost a life, total " << lives << "\n";
+		if (pos.x >= map_size.x-BALL_SIDE) {
+			b.direction = Vector2f(-abs(b.direction.x), b.direction.y);
+		}
+
+		if (pos.y <= 0) {
+			b.direction = Vector2f(b.direction.x, abs(b.direction.y));
+		}
+
+		if (pos.y+BALL_SIDE/2. >= map_size.y) {
+			it = balls.erase(it);
+
+			if (balls.size() == 0) {
+				if (lives == 0) {
+					changeMap(actual_map);
+				} else {
+					stuck = true;
+					addBall();
+				}
+
+				lives -= 1;
+				std::cout << "Lost a life, total " << lives << "\n";
+				return;
+			}
+
+			// avoids useless computations and moving `it` twice
+			continue;
+		}
+
+		/* ball/paddle collisions*/
+		if (b.sprite.getGlobalBounds().intersects(paddle.getGlobalBounds())) {
+			float width = paddle.getSize().x;
+			float p_x = paddle.getPosition().x + width/2.;
+			float delta_x = (p_x - (pos.x+BALL_SIDE/2.)) / (width/2.);
+			delta_x = clamp(delta_x, -1, 1);
+
+			float angle = getBounceAngle(delta_x);
+			b.direction.x = std::cos(angle);
+			b.direction.y = -std::sin(angle);
+
+			b.speed = getBounceSpeed(delta_x);
+		}
+
+		/* ball/bricks collisions */
+		Brick collided = ballBricksCollision(b);
+
+		if (collided.type != Brick::BLANK) {
+			handleBrickDestruction(collided);
+		}
+
+		++it;
 	}
 
 	/* paddle/walls collisions*/
@@ -183,8 +213,7 @@ void Breaker::handleCollision()
 	}
 
 	/* bonuses/bottom/paddle collisions */
-	auto it = bonuses.begin();
-	while (it != bonuses.end()) {
+	for (auto it = bonuses.begin(); it != bonuses.end();) {
 		Brick& b = *it;
 
 		if (b.y > map_size.y) {
@@ -197,26 +226,6 @@ void Breaker::handleCollision()
 		}
 	}
 
-	/* paddle/ball collisions*/
-	if (ball.getGlobalBounds().intersects(paddle.getGlobalBounds())) {
-		float p_x = paddle.getPosition().x + paddle_size/2.;
-		float delta_x = (p_x - (ball_x+BALL_SIDE/2.)) / (paddle_size/2.);
-		delta_x = clamp(delta_x, -1, 1);
-
-		float angle = getBounceAngle(delta_x);
-		ball_direction.x = std::cos(angle);
-		ball_direction.y = -std::sin(angle);
-
-		ball_speed = getBounceSpeed(delta_x);
-	}
-
-	/* ball/bricks collisions */
-	Brick collided = ballBricksCollision();
-
-	if (collided.type != Brick::BLANK) {
-		handleBrickDestruction(collided);
-	}
-
 	/* exit measures*/
 	if (maps[actual_map].bricks.empty()) {
 		std::cout << "You won. Well played.\n";
@@ -227,8 +236,8 @@ void Breaker::handleCollision()
 /* The algorithm is based on
  * https://gamedev.stackexchange.com/a/120897
  * */
-Brick Breaker::ballBricksCollision() {
-	FloatRect bounds = ball.getGlobalBounds();
+Brick Breaker::ballBricksCollision(Ball& ball) {
+	FloatRect bounds = ball.sprite.getGlobalBounds();
 	std::vector<Brick>& bricks = maps[actual_map].bricks;
 	const float r = bounds.width/2;
 
@@ -239,42 +248,42 @@ Brick Breaker::ballBricksCollision() {
 		Vector2f ball_center(bounds.left+bounds.width/2, bounds.top+bounds.height/2);
 
 		if (h_rect.contains(ball_center)) {
-			ball_direction.x = -ball_direction.x; goto out;
+			ball.direction.x = -ball.direction.x; goto out;
 		}
 
 		if (v_rect.contains(ball_center)) {
-			ball_direction.y = -ball_direction.y; goto out;
+			ball.direction.y = -ball.direction.y; goto out;
 		}
 
 		if (distance(ball_center, Vector2f(b.left, b.top)) < r) { // top left
 			if (b.left - ball_center.x < b.top - ball_center.y) {
-				ball_direction.y = -ball_direction.y; goto out;
+				ball.direction.y = -ball.direction.y; goto out;
 			} else {
-				ball_direction.x = -ball_direction.x; goto out;
+				ball.direction.x = -ball.direction.x; goto out;
 			}
 		}
 
 		if (distance(ball_center, Vector2f(b.left+b.width, b.top)) < r) { // top right
 			if (ball_center.x - (b.left+b.width) < b.top - ball_center.y) {
-				ball_direction.y = -ball_direction.y; goto out;
+				ball.direction.y = -ball.direction.y; goto out;
 			} else {
-				ball_direction.x = -ball_direction.x; goto out;
+				ball.direction.x = -ball.direction.x; goto out;
 			}
 		}
 
 		if (distance(ball_center, Vector2f(b.left+b.width, b.top+b.height)) < r) { // bottom right
 			if (ball_center.x - (b.left+b.width) < ball_center.y - (b.top+b.height)) {
-				ball_direction.y = -ball_direction.y; goto out;
+				ball.direction.y = -ball.direction.y; goto out;
 			} else {
-				ball_direction.x = -ball_direction.x; goto out;
+				ball.direction.x = -ball.direction.x; goto out;
 			}
 		}
 
 		if (distance(ball_center, Vector2f(b.left, b.top+b.height)) < r) { // bottom left
 			if (b.left - ball_center.x < ball_center.y - (b.top+b.height)) {
-				ball_direction.y = -ball_direction.y; goto out;
+				ball.direction.y = -ball.direction.y; goto out;
 			} else {
-				ball_direction.x = -ball_direction.x; goto out;
+				ball.direction.x = -ball.direction.x; goto out;
 			}
 		}
 
@@ -309,6 +318,29 @@ void Breaker::applyBonus(Brick::Type type) {
 		lives += 1;
 		std::cout << "Gained a life, total " << lives << "\n";
 	}
+
+	if (type == Brick::NEW_BALL) {
+		addBall();
+
+		Ball& b = balls.back();
+		b.direction = balls[0].direction;
+		b.direction.x = -b.direction.x;
+		b.sprite.setPosition(balls[0].sprite.getPosition());
+	}
+}
+
+void Breaker::addBall() {
+	Ball b;
+
+	CircleShape sprite(BALL_RADIUS, BALL_POINT_COUNT);
+	sprite.setFillColor(Color::Magenta);
+	sprite.setOutlineColor(Color::Black);
+	sprite.setOutlineThickness(1);
+
+	b.sprite = sprite;
+	b.speed = base_ball_speed;
+
+	balls.push_back(b);
 }
 
 // 0 < dx < 1, with 0 the beginning of the paddle
@@ -332,14 +364,20 @@ void Breaker::changeMap(unsigned int map) {
 	std::cout << "Breaker: switching to map number " << map+1 << "\n";
 
 	actual_map = map;
+	stuck = true;
+	lives = 0;
 	maps[actual_map].load();
 	window_size = maps[actual_map].getSize();
+
+	paddle.setFillColor(Color::White);
 	paddle.setSize(Vector2f(PADDLE_SIZE_X, PADDLE_SIZE_Y));
 	paddle.setPosition(window_size.x/2.-paddle.getSize().x/2.,
 		window_size.y-PADDLE_SIZE_Y*1.2);
 	paddle_speed = PADDLE_SPEED;
+
 	base_ball_speed = BALL_SPEED;
-	stuck = true;
-	lives = 0;
+	balls.clear();
+	addBall();
+
 	bonuses.clear();
 }
