@@ -68,6 +68,7 @@ void Breaker::handleEvents(const Event& event)
 		case Keyboard::Space:
 			if (stuck) {
 				stuck = false;
+				balls[0].direction.y = base_ball_speed;
 			}
 			break;
 		default:
@@ -333,9 +334,7 @@ void Breaker::addBall() {
 	Ball b;
 
 	CircleShape sprite(BALL_RADIUS, BALL_POINT_COUNT);
-	sprite.setFillColor(Color::Magenta);
-	sprite.setOutlineColor(Color::Black);
-	sprite.setOutlineThickness(1);
+	sprite.setFillColor(Color(150, 150, 150));
 
 	b.sprite = sprite;
 	b.speed = base_ball_speed;
