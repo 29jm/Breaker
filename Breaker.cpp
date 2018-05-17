@@ -168,10 +168,10 @@ void Breaker::handleCollision()
 				} else {
 					stuck = true;
 					addBall();
+					lives -= 1;
+					std::cout << "Lost a life, total " << lives << "\n";
 				}
 
-				lives -= 1;
-				std::cout << "Lost a life, total " << lives << "\n";
 				return;
 			}
 

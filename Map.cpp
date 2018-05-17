@@ -8,10 +8,12 @@
 using namespace sf;
 using std::max;
 
-static std::vector<uint32_t> palette{
+static std::vector<uint32_t> palette {
 	0xFF1415FF, // R
 	0x00DB00FF, // G
-	0x4CB7FFFF  // B
+	0x4CB7FFFF, // B
+	0xB6B6B6FF, // Grey
+	0xDBDB00FF, // Yellow
 };
 
 Map::Map()
