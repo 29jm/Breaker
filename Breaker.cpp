@@ -249,42 +249,50 @@ int Breaker::ballBricksCollision(Ball& ball) {
 		Vector2f ball_center(bounds.left+bounds.width/2, bounds.top+bounds.height/2);
 
 		if (h_rect.contains(ball_center)) {
-			ball.direction.x = -ball.direction.x; goto out;
+			if (ball_center.x < h_rect.left+h_rect.width/2) {
+				ball.direction.x = -abs(ball.direction.x); goto out;
+			} else {
+				ball.direction.x = abs(ball.direction.x); goto out;
+			}
 		}
 
 		if (v_rect.contains(ball_center)) {
-			ball.direction.y = -ball.direction.y; goto out;
+			if (ball_center.y < v_rect.top+v_rect.height/2) {
+				ball.direction.y = -abs(ball.direction.y); goto out;
+			} else {
+				ball.direction.y = abs(ball.direction.y); goto out;
+			}
 		}
 
 		if (distance(ball_center, Vector2f(b.left, b.top)) < r) { // top left
 			if (b.left - ball_center.x < b.top - ball_center.y) {
-				ball.direction.y = -ball.direction.y; goto out;
+				ball.direction.y = -abs(ball.direction.y); goto out;
 			} else {
-				ball.direction.x = -ball.direction.x; goto out;
+				ball.direction.x = -abs(ball.direction.x); goto out;
 			}
 		}
 
 		if (distance(ball_center, Vector2f(b.left+b.width, b.top)) < r) { // top right
 			if (ball_center.x - (b.left+b.width) < b.top - ball_center.y) {
-				ball.direction.y = -ball.direction.y; goto out;
+				ball.direction.y = -abs(ball.direction.y); goto out;
 			} else {
-				ball.direction.x = -ball.direction.x; goto out;
+				ball.direction.x = abs(ball.direction.x); goto out;
 			}
 		}
 
 		if (distance(ball_center, Vector2f(b.left+b.width, b.top+b.height)) < r) { // bottom right
 			if (ball_center.x - (b.left+b.width) < ball_center.y - (b.top+b.height)) {
-				ball.direction.y = -ball.direction.y; goto out;
+				ball.direction.y = abs(ball.direction.y); goto out;
 			} else {
-				ball.direction.x = -ball.direction.x; goto out;
+				ball.direction.x = abs(ball.direction.x); goto out;
 			}
 		}
 
 		if (distance(ball_center, Vector2f(b.left, b.top+b.height)) < r) { // bottom left
 			if (b.left - ball_center.x < ball_center.y - (b.top+b.height)) {
-				ball.direction.y = -ball.direction.y; goto out;
+				ball.direction.y = abs(ball.direction.y); goto out;
 			} else {
-				ball.direction.x = -ball.direction.x; goto out;
+				ball.direction.x = -abs(ball.direction.x); goto out;
 			}
 		}
 
@@ -318,6 +326,7 @@ void Breaker::applyBonus(Brick::Type type) {
 	if (type == Brick::EXPAND) {
 		Vector2f size = paddle.getSize();
 		paddle.setSize(Vector2f(size.x+PADDLE_EXPAND, size.y));
+		paddle.move(-PADDLE_EXPAND/2., 0);
 	}
 
 	if (type == Brick::ONE_UP) {
@@ -329,6 +338,7 @@ void Breaker::applyBonus(Brick::Type type) {
 		addBall();
 
 		Ball& b = balls.back();
+		b.speed = balls[0].speed;
 		b.direction = balls[0].direction;
 		b.direction.x = -b.direction.x;
 		b.sprite.setPosition(balls[0].sprite.getPosition());
