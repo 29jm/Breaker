@@ -27,15 +27,16 @@ private:
 	float getDeltaTime();
 
 	void handleCollision();
-	Brick ballBricksCollision(Ball& ball);
+	int ballBricksCollision(Ball& ball);
 
-	void handleBrickDestruction(const Brick& b);
+	void handleBrickDestruction(int index);
 	void applyBonus(Brick::Type type);
 	void addBall();
 
 	float getBounceAngle(float dx);
 	float getBounceSpeed(float dx);
 
+	bool hasWon() const;
 	void changeMap(unsigned int map);
 
 	std::vector<Map> maps;

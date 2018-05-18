@@ -8,11 +8,15 @@ class Brick
 {
 public:
 	enum Type {
+		// Non-bonus types
 		BLANK,
 		NORMAL,
-		EXPAND,
+		UNBREAKABLE,
+		RESISTANT,
+		// Bonus types
+		EXPAND = 4,
 		ONE_UP,
-		NEW_BALL
+		NEW_BALL,
 	};
 
 	Brick();
@@ -23,6 +27,9 @@ public:
 
 	void setPosition(float xp, float yp);
 	sf::FloatRect getRect() const;
+
+	bool isBonus() const;
+	bool onDestroy();
 
 	Type type;
 	float x;

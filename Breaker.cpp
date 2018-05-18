@@ -194,10 +194,10 @@ void Breaker::handleCollision()
 		}
 
 		/* ball/bricks collisions */
-		Brick collided = ballBricksCollision(b);
+		int collided_index = ballBricksCollision(b);
 
-		if (collided.type != Brick::BLANK) {
-			handleBrickDestruction(collided);
+		if (collided_index != -1) {
+			handleBrickDestruction(collided_index);
 		}
 
 		++it;
@@ -228,16 +228,16 @@ void Breaker::handleCollision()
 	}
 
 	/* exit measures*/
-	if (maps[actual_map].bricks.empty()) {
+	if (hasWon()) {
 		std::cout << "You won. Well played.\n";
-		changeMap(actual_map);
+		changeMap((actual_map + 1) % maps.size());
 	}
 }
 
 /* The algorithm is based on
  * https://gamedev.stackexchange.com/a/120897
  * */
-Brick Breaker::ballBricksCollision(Ball& ball) {
+int Breaker::ballBricksCollision(Ball& ball) {
 	FloatRect bounds = ball.sprite.getGlobalBounds();
 	std::vector<Brick>& bricks = maps[actual_map].bricks;
 	const float r = bounds.width/2;
@@ -293,20 +293,25 @@ Brick Breaker::ballBricksCollision(Ball& ball) {
 
 		// a collision occured
 		out:
-		Brick erased_brick(bricks[i]);
-		bricks.erase(bricks.begin()+i);
-		return erased_brick;
+		return i;
 	}
 
-	return Brick();
+	return -1;
 }
 
-void Breaker::handleBrickDestruction(const Brick& b) {
-	if (b.type == Brick::NORMAL) {
-		return;
-	}
+void Breaker::handleBrickDestruction(int index) {
+	auto& bricks = maps[actual_map].bricks;
+	Brick& brick = bricks[index];
 
-	bonuses.push_back(b);
+	// Using a reference here allows the brick to evolve through hits.
+	// Perhaps it updates an internal counter, or whatever
+	if (brick.onDestroy()) {
+		if (brick.isBonus()) {
+			bonuses.push_back(brick);
+		}
+
+		bricks.erase(bricks.begin()+index);
+	}
 }
 
 void Breaker::applyBonus(Brick::Type type) {
@@ -353,6 +358,16 @@ float Breaker::getBounceSpeed(float dx) {
 	}
 
 	return base_ball_speed*(1 + map(dx, 0, 1, 0, .5));
+}
+
+bool Breaker::hasWon() const {
+	for (const Brick& b : maps[actual_map].bricks) {
+		if (b.type != Brick::UNBREAKABLE) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void Breaker::changeMap(unsigned int map) {

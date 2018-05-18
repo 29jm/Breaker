@@ -28,12 +28,15 @@ Brick::Brick(Color brick_color, Vector2f pos, Type brick_type)
 }
 
 void Brick::loadTextures() {
-	textures.resize(5);
+	textures.resize(10);
 
+	// I'll have to implement a mapping sometime
+	// I'm just procrastinating here
 	textures[1].loadFromFile("textures/normal.png");
-	textures[2].loadFromFile("textures/expand.png");
-	textures[3].loadFromFile("textures/one_up.png");
-	textures[4].loadFromFile("textures/new_ball.png");
+	textures[2].loadFromFile("textures/unbreakable.png");
+	textures[4].loadFromFile("textures/expand.png");
+	textures[5].loadFromFile("textures/one_up.png");
+	textures[6].loadFromFile("textures/new_ball.png");
 }
 
 void Brick::draw(RenderWindow& window)
@@ -52,4 +55,12 @@ void Brick::setPosition(float xp, float yp) {
 
 FloatRect Brick::getRect() const {
 	return FloatRect(x, y, SIZE_X, SIZE_Y);
+}
+
+bool Brick::isBonus() const {
+	return type >= EXPAND;
+}
+
+bool Brick::onDestroy() {
+	return type != UNBREAKABLE;
 }
