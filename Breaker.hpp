@@ -39,6 +39,9 @@ private:
 	bool hasWon() const;
 	void changeMap(unsigned int map);
 
+	void loadMaps();
+	void createDefaultMap();
+
 	std::vector<Map> maps;
 	sf::RectangleShape paddle;
 	std::vector<Ball> balls;

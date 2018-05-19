@@ -7,9 +7,11 @@
 #include "Map.hpp"
 #include "helpers.hpp"
 #include "constants.hpp"
+#include "default_map.hpp"
 
 using namespace sf;
 using std::abs;
+using std::ofstream;
 
 Breaker::Breaker()
 	: paddle(Vector2f(PADDLE_SIZE_X, PADDLE_SIZE_Y)),
@@ -19,26 +21,7 @@ Breaker::Breaker()
 	  paddle_speed(PADDLE_SPEED),
 	  base_ball_speed(BALL_SPEED)
 {
-	std::ifstream map_list("map.list");
-	std::string map_name;
-
-	if (!map_list)
-	{
-		// TODO create the file and a default map if absent
-		std::cerr << "Breaker: failed to load map.list" << std::endl;
-		is_finished = true;
-	}
-
-	while (!map_list.eof()) {
-		map_list >> map_name;
-
-		if (map_list.fail()) {
-			break;
-		}
-
-		Map m(map_name);
-		maps.push_back(m);
-	}
+	loadMaps();
 
 	std::cout << "Breaker: " << maps.size() << " maps loaded" << std::endl;
 
@@ -404,4 +387,48 @@ void Breaker::changeMap(unsigned int map) {
 	addBall();
 
 	bonuses.clear();
+}
+
+void Breaker::loadMaps() {
+	std::ifstream map_list("map.list");
+	std::string map_name;
+
+	if (!map_list) {
+		createDefaultMap();
+		map_list.open("map.list");
+
+		if (!map_list) {
+			is_finished = true;
+			return;
+		}
+	}
+
+	while (!map_list.eof()) {
+		map_list >> map_name;
+
+		if (map_list.fail()) {
+			break;
+		}
+
+		Map m(map_name);
+		maps.push_back(m);
+	}
+}
+
+void Breaker::createDefaultMap() {
+	ofstream map_list("map.list", ofstream::out | ofstream::trunc);
+
+	if (!map_list) {
+		is_finished = true;
+		return;
+	}
+
+	map_list << "M.map";
+
+	std::ifstream default_map("M.map");
+
+	if (!default_map) {
+		ofstream map("M.map", ofstream::out | ofstream::trunc);
+		map << default_map_str;
+	}
 }
