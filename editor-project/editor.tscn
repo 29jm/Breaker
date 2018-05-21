@@ -1,0 +1,163 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://exporter.gd" type="Script" id=1]
+[ext_resource path="res://tileset.tscn" type="PackedScene" id=2]
+[ext_resource path="res://textures/unbreakable.png" type="Texture" id=3]
+[ext_resource path="res://textures/normal.png" type="Texture" id=4]
+[ext_resource path="res://textures/new_ball.png" type="Texture" id=5]
+[ext_resource path="res://textures/one_up.png" type="Texture" id=6]
+[ext_resource path="res://textures/blank.png" type="Texture" id=7]
+[ext_resource path="res://textures/expand.png" type="Texture" id=8]
+[ext_resource path="res://tileset.tres" type="TileSet" id=9]
+
+[node name="breaker_maps" type="Node" index="0"]
+script = ExtResource( 1 )
+
+[node name="tileset" parent="." index="0" instance=ExtResource( 2 )]
+editor/display_folded = true
+visible = false
+
+[node name="unbreakable_R" type="Sprite" parent="tileset" index="0"]
+modulate = Color( 1, 0.0784314, 0.0823529, 1 )
+texture = ExtResource( 3 )
+
+[node name="unbreakable_G" type="Sprite" parent="tileset" index="1"]
+modulate = Color( 0, 0.858824, 0, 1 )
+texture = ExtResource( 3 )
+
+[node name="unbreakable_B" type="Sprite" parent="tileset" index="2"]
+modulate = Color( 0.298039, 0.717647, 1, 1 )
+texture = ExtResource( 3 )
+
+[node name="unbreakable_Grey" type="Sprite" parent="tileset" index="3"]
+modulate = Color( 0.713726, 0.713726, 0.713726, 1 )
+texture = ExtResource( 3 )
+
+[node name="unbreakable_Yellow" type="Sprite" parent="tileset" index="4"]
+modulate = Color( 0.858824, 0.858824, 0, 1 )
+texture = ExtResource( 3 )
+
+[node name="normal_R" type="Sprite" parent="tileset" index="5"]
+modulate = Color( 1, 0.0784314, 0.0823529, 1 )
+texture = ExtResource( 4 )
+
+[node name="normal_G" type="Sprite" parent="tileset" index="6"]
+modulate = Color( 0, 0.858824, 0, 1 )
+texture = ExtResource( 4 )
+
+[node name="normal_B" type="Sprite" parent="tileset" index="7"]
+modulate = Color( 0.298039, 0.717647, 1, 1 )
+texture = ExtResource( 4 )
+
+[node name="normal_Grey" type="Sprite" parent="tileset" index="8"]
+modulate = Color( 0.713726, 0.713726, 0.713726, 1 )
+texture = ExtResource( 4 )
+
+[node name="normal_Yellow" type="Sprite" parent="tileset" index="9"]
+modulate = Color( 0.858824, 0.858824, 0, 1 )
+texture = ExtResource( 4 )
+
+[node name="new_ball_R" type="Sprite" parent="tileset" index="10"]
+modulate = Color( 1, 0.0784314, 0.0823529, 1 )
+texture = ExtResource( 5 )
+
+[node name="new_ball_G" type="Sprite" parent="tileset" index="11"]
+modulate = Color( 0, 0.858824, 0, 1 )
+texture = ExtResource( 5 )
+
+[node name="new_ball_B" type="Sprite" parent="tileset" index="12"]
+modulate = Color( 0.298039, 0.717647, 1, 1 )
+texture = ExtResource( 5 )
+
+[node name="new_ball_Grey" type="Sprite" parent="tileset" index="13"]
+modulate = Color( 0.713726, 0.713726, 0.713726, 1 )
+texture = ExtResource( 5 )
+
+[node name="new_ball_Yellow" type="Sprite" parent="tileset" index="14"]
+modulate = Color( 0.858824, 0.858824, 0, 1 )
+texture = ExtResource( 5 )
+
+[node name="one_up_R" type="Sprite" parent="tileset" index="15"]
+modulate = Color( 1, 0.0784314, 0.0823529, 1 )
+texture = ExtResource( 6 )
+
+[node name="one_up_G" type="Sprite" parent="tileset" index="16"]
+modulate = Color( 0, 0.858824, 0, 1 )
+texture = ExtResource( 6 )
+
+[node name="one_up_B" type="Sprite" parent="tileset" index="17"]
+modulate = Color( 0.298039, 0.717647, 1, 1 )
+texture = ExtResource( 6 )
+
+[node name="one_up_Grey" type="Sprite" parent="tileset" index="18"]
+modulate = Color( 0.713726, 0.713726, 0.713726, 1 )
+texture = ExtResource( 6 )
+
+[node name="one_up_Yellow" type="Sprite" parent="tileset" index="19"]
+modulate = Color( 0.858824, 0.858824, 0, 1 )
+texture = ExtResource( 6 )
+
+[node name="blank" type="Sprite" parent="tileset" index="20"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 7 )
+
+[node name="blank_R" type="Sprite" parent="tileset" index="21"]
+modulate = Color( 1, 0.0784314, 0.0823529, 1 )
+texture = ExtResource( 7 )
+
+[node name="blank_G" type="Sprite" parent="tileset" index="22"]
+modulate = Color( 0, 0.858824, 0, 1 )
+texture = ExtResource( 7 )
+
+[node name="blank_B" type="Sprite" parent="tileset" index="23"]
+modulate = Color( 0.298039, 0.717647, 1, 1 )
+texture = ExtResource( 7 )
+
+[node name="blank_Grey" type="Sprite" parent="tileset" index="24"]
+modulate = Color( 0.713726, 0.713726, 0.713726, 1 )
+texture = ExtResource( 7 )
+
+[node name="blank_Yellow" type="Sprite" parent="tileset" index="25"]
+modulate = Color( 0.858824, 0.858824, 0, 1 )
+texture = ExtResource( 7 )
+
+[node name="expand_R" type="Sprite" parent="tileset" index="26"]
+modulate = Color( 1, 0.0784314, 0.0823529, 1 )
+texture = ExtResource( 8 )
+
+[node name="expand_G" type="Sprite" parent="tileset" index="27"]
+modulate = Color( 0, 0.858824, 0, 1 )
+texture = ExtResource( 8 )
+
+[node name="expand_B" type="Sprite" parent="tileset" index="28"]
+modulate = Color( 0.298039, 0.717647, 1, 1 )
+texture = ExtResource( 8 )
+
+[node name="expand_Grey" type="Sprite" parent="tileset" index="29"]
+modulate = Color( 0.713726, 0.713726, 0.713726, 1 )
+texture = ExtResource( 8 )
+
+[node name="expand_Yellow" type="Sprite" parent="tileset" index="30"]
+modulate = Color( 0.858824, 0.858824, 0, 1 )
+texture = ExtResource( 8 )
+
+[node name="M" type="TileMap" parent="." index="1"]
+mode = 0
+tile_set = ExtResource( 9 )
+cell_size = Vector2( 30, 15 )
+cell_quadrant_size = 16
+cell_custom_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+cell_half_offset = 2
+cell_tile_origin = 0
+cell_y_sort = false
+cell_clip_uv = false
+collision_use_kinematic = false
+collision_friction = 1.0
+collision_bounce = 0.0
+collision_layer = 1
+collision_mask = 1
+occluder_light_mask = 1
+format = 1
+tile_data = PoolIntArray( 0, 20, 0, 1, 20, 0, 2, 20, 0, 3, 20, 0, 4, 20, 0, 5, 20, 0, 6, 20, 0, 7, 20, 0, 8, 20, 0, 9, 20, 0, 10, 20, 0, 11, 20, 0, 12, 20, 0, 13, 20, 0, 14, 20, 0, 15, 20, 0, 16, 20, 0, 65536, 20, 0, 65537, 8, 0, 65538, 20, 0, 65539, 20, 0, 65540, 20, 0, 65541, 20, 0, 65542, 20, 0, 65543, 20, 0, 65544, 9, 0, 65545, 20, 0, 65546, 20, 0, 65547, 20, 0, 65548, 20, 0, 65549, 20, 0, 65550, 20, 0, 65551, 8, 0, 65552, 20, 0, 131072, 20, 0, 131073, 8, 0, 131074, 8, 0, 131075, 8, 0, 131076, 20, 0, 131077, 20, 0, 131078, 20, 0, 131079, 9, 0, 131080, 20, 0, 131081, 9, 0, 131082, 20, 0, 131083, 20, 0, 131084, 20, 0, 131085, 8, 0, 131086, 8, 0, 131087, 8, 0, 131088, 20, 0, 196608, 20, 0, 196609, 8, 0, 196610, 5, 0, 196611, 5, 0, 196612, 8, 0, 196613, 20, 0, 196614, 9, 0, 196615, 20, 0, 196616, 20, 0, 196617, 20, 0, 196618, 9, 0, 196619, 20, 0, 196620, 8, 0, 196621, 5, 0, 196622, 5, 0, 196623, 8, 0, 196624, 20, 0, 262144, 20, 0, 262145, 8, 0, 262146, 5, 0, 262147, 5, 0, 262148, 5, 0, 262149, 8, 0, 262150, 20, 0, 262151, 20, 0, 262152, 15, 0, 262153, 20, 0, 262154, 20, 0, 262155, 8, 0, 262156, 5, 0, 262157, 5, 0, 262158, 5, 0, 262159, 8, 0, 262160, 20, 0, 327680, 20, 0, 327681, 8, 0, 327682, 14, 0, 327683, 5, 0, 327684, 5, 0, 327685, 5, 0, 327686, 8, 0, 327687, 20, 0, 327688, 20, 0, 327689, 20, 0, 327690, 8, 0, 327691, 5, 0, 327692, 5, 0, 327693, 5, 0, 327694, 14, 0, 327695, 8, 0, 327696, 20, 0, 393216, 20, 0, 393217, 8, 0, 393218, 3, 0, 393219, 5, 0, 393220, 5, 0, 393221, 5, 0, 393222, 5, 0, 393223, 8, 0, 393224, 20, 0, 393225, 8, 0, 393226, 5, 0, 393227, 5, 0, 393228, 5, 0, 393229, 5, 0, 393230, 3, 0, 393231, 8, 0, 393232, 20, 0, 458752, 20, 0, 458753, 8, 0, 458754, 5, 0, 458755, 5, 0, 458756, 5, 0, 458757, 5, 0, 458758, 5, 0, 458759, 5, 0, 458760, 8, 0, 458761, 5, 0, 458762, 5, 0, 458763, 5, 0, 458764, 5, 0, 458765, 5, 0, 458766, 5, 0, 458767, 8, 0, 458768, 20, 0, 524288, 20, 0, 524289, 8, 0, 524290, 5, 0, 524291, 5, 0, 524292, 5, 0, 524293, 5, 0, 524294, 5, 0, 524295, 5, 0, 524296, 5, 0, 524297, 5, 0, 524298, 5, 0, 524299, 5, 0, 524300, 5, 0, 524301, 5, 0, 524302, 5, 0, 524303, 8, 0, 524304, 20, 0, 589824, 20, 0, 589825, 8, 0, 589826, 5, 0, 589827, 5, 0, 589828, 5, 0, 589829, 5, 0, 589830, 5, 0, 589831, 5, 0, 589832, 20, 0, 589833, 5, 0, 589834, 5, 0, 589835, 5, 0, 589836, 5, 0, 589837, 5, 0, 589838, 5, 0, 589839, 8, 0, 589840, 20, 0, 655360, 20, 0, 655361, 8, 0, 655362, 5, 0, 655363, 21, 0, 655364, 5, 0, 655365, 5, 0, 655366, 5, 0, 655367, 20, 0, 655368, 3, 0, 655369, 20, 0, 655370, 5, 0, 655371, 5, 0, 655372, 5, 0, 655373, 21, 0, 655374, 5, 0, 655375, 8, 0, 655376, 20, 0, 720896, 20, 0, 720897, 8, 0, 720898, 5, 0, 720899, 3, 0, 720900, 7, 0, 720901, 5, 0, 720902, 5, 0, 720903, 5, 0, 720904, 20, 0, 720905, 5, 0, 720906, 5, 0, 720907, 5, 0, 720908, 7, 0, 720909, 3, 0, 720910, 5, 0, 720911, 8, 0, 720912, 20, 0, 786432, 20, 0, 786433, 8, 0, 786434, 5, 0, 786435, 5, 0, 786436, 20, 0, 786437, 5, 0, 786438, 5, 0, 786439, 5, 0, 786440, 7, 0, 786441, 5, 0, 786442, 5, 0, 786443, 5, 0, 786444, 20, 0, 786445, 5, 0, 786446, 5, 0, 786447, 8, 0, 786448, 20, 0, 851968, 20, 0, 851969, 8, 0, 851970, 5, 0, 851971, 5, 0, 851972, 20, 0, 851973, 5, 0, 851974, 5, 0, 851975, 7, 0, 851976, 20, 0, 851977, 7, 0, 851978, 5, 0, 851979, 5, 0, 851980, 20, 0, 851981, 5, 0, 851982, 5, 0, 851983, 8, 0, 851984, 20, 0, 917504, 20, 0, 917505, 8, 0, 917506, 5, 0, 917507, 5, 0, 917508, 20, 0, 917509, 5, 0, 917510, 7, 0, 917511, 20, 0, 917512, 20, 0, 917513, 20, 0, 917514, 7, 0, 917515, 5, 0, 917516, 20, 0, 917517, 5, 0, 917518, 5, 0, 917519, 8, 0, 917520, 20, 0 )
+_sections_unfolded = [ "Cell", "Transform", "Visibility", "Z Index" ]
+

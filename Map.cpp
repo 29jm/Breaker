@@ -4,21 +4,18 @@
 
 #include "Map.hpp"
 #include "constants.hpp"
+#include "default_files.hpp"
 
 using namespace sf;
 using std::max;
+using std::ofstream;
+using std::ifstream;
 
-static std::vector<uint32_t> palette {
-	0xFF1415FF, // R
-	0x00DB00FF, // G
-	0x4CB7FFFF, // B
-	0xB6B6B6FF, // Grey
-	0xDBDB00FF, // Yellow
-};
+std::vector<uint32_t> Map::palette;
 
 Map::Map()
 {
-	
+
 }
 
 Map::Map(const std::string& map_name)
@@ -40,7 +37,7 @@ void Map::render(RenderWindow& window)
 
 bool Map::load()
 {
-	std::ifstream fp(name);
+	ifstream map_file(name);
 	std::string line;
 	int y = 0;
 	int type = 0;
@@ -50,12 +47,16 @@ bool Map::load()
 	padding_bricks.clear();
 	size = Vector2u();
 
-	if (!fp) {
+	if (!map_file) {
 		return false;
 	}
 
-	while (!fp.eof()) {
-		std::getline(fp, line);
+	if (palette.size() == 0) {
+		loadPalette();
+	}
+
+	while (!map_file.eof()) {
+		std::getline(map_file, line);
 
 		std::istringstream stream(line);
 		int x = 0;
@@ -64,9 +65,9 @@ bool Map::load()
 			stream >> type;
 			stream >> color_index;
 
-			if (fp.eof()) {
+			if (map_file.eof()) {
 				return true;
-			} else if (fp.fail()) {
+			} else if (map_file.fail()) {
 				return false;
 			}
 
@@ -109,7 +110,7 @@ Vector2u Map::getSize()
 			y = std::max(y, b.y);
 		}
 
-		// The coordinates are the top-left corner of each brick
+		// The coordinates are the position of the top-left corner of each brick
 		x += SIZE_X;
 		y += SIZE_Y;
 
@@ -119,3 +120,30 @@ Vector2u Map::getSize()
 	return size;
 }
 
+void Map::loadPalette() {
+	ifstream palette_file("palette.list");
+
+	if (!palette_file) {
+		ofstream npalette("palette.list", ofstream::out | ofstream::trunc);
+		npalette << default_palette_str;
+		npalette.close();
+		palette_file.open("palette.list");
+	}
+
+	std::string line;
+	uint32_t color;
+
+	while (true) {
+		std::getline(palette_file, line);
+
+		if (line.empty()) {
+			break;
+		}
+
+		line = line.substr(0, line.find(" "));
+		line += "FF";
+		std::stringstream stream(line);
+		stream >> std::hex >> color;
+		palette.push_back(color);
+	}
+}

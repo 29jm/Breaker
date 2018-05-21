@@ -21,8 +21,12 @@ public:
     std::string name;
 
 private:
+	void loadPalette();
+
 	std::vector<Brick> padding_bricks;
 	sf::Vector2u size;
+
+	static std::vector<uint32_t> palette;
 };
 
 #endif	/* MAP_HPP */

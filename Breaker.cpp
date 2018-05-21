@@ -7,11 +7,12 @@
 #include "Map.hpp"
 #include "helpers.hpp"
 #include "constants.hpp"
-#include "default_map.hpp"
+#include "default_files.hpp"
 
 using namespace sf;
 using std::abs;
 using std::ofstream;
+using std::ifstream;
 
 Breaker::Breaker()
 	: paddle(Vector2f(PADDLE_SIZE_X, PADDLE_SIZE_Y)),
@@ -390,7 +391,7 @@ void Breaker::changeMap(unsigned int map) {
 }
 
 void Breaker::loadMaps() {
-	std::ifstream map_list("map.list");
+	ifstream map_list("map.list");
 	std::string map_name;
 
 	if (!map_list) {
@@ -425,7 +426,7 @@ void Breaker::createDefaultMap() {
 
 	map_list << "M.map";
 
-	std::ifstream default_map("M.map");
+	ifstream default_map("M.map");
 
 	if (!default_map) {
 		ofstream map("M.map", ofstream::out | ofstream::trunc);
